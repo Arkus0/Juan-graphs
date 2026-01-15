@@ -17,9 +17,44 @@ export default function OperacionDetalle() {
   // Filters
   const [dateStart, setDateStart] = useState('');
   const [dateEnd, setDateEnd] = useState('');
+  const [dateError, setDateError] = useState('');
 
-  // Hook for data, enabled only when a table is selected
-  const { data: series, isLoading: loadingDatos } = useDatosTabla(selectedTabla?.Id || null, 24, dateStart, dateEnd);
+  // Validate date range
+  const handleDateStartChange = (value: string) => {
+    setDateStart(value);
+    if (dateEnd && value && new Date(value) > new Date(dateEnd)) {
+      setDateError('La fecha de inicio no puede ser posterior a la fecha de fin');
+    } else {
+      setDateError('');
+    }
+  };
+
+  const handleDateEndChange = (value: string) => {
+    setDateEnd(value);
+    if (dateStart && value && new Date(dateStart) > new Date(value)) {
+      setDateError('La fecha de fin no puede ser anterior a la fecha de inicio');
+    } else {
+      setDateError('');
+    }
+  };
+
+  // Quick date presets
+  const setDatePreset = (months: number) => {
+    const end = new Date();
+    const start = new Date();
+    start.setMonth(start.getMonth() - months);
+    setDateStart(start.toISOString().split('T')[0]);
+    setDateEnd(end.toISOString().split('T')[0]);
+    setDateError('');
+  };
+
+  // Hook for data, enabled only when a table is selected and dates are valid
+  const { data: series, isLoading: loadingDatos } = useDatosTabla(
+    selectedTabla?.Id || null,
+    24,
+    dateError ? '' : dateStart,
+    dateError ? '' : dateEnd
+  );
 
   if (!operacionId) return <div>ID inválido</div>;
   if (loadingTablas) return <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>;
@@ -90,39 +125,81 @@ export default function OperacionDetalle() {
               </div>
 
               {/* Filters */}
-              <div className="mb-6 flex flex-wrap gap-4 items-end bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
-                <div>
-                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Desde</label>
-                    <div className="relative">
-                        <input
-                            type="date"
-                            className="pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500"
-                            value={dateStart}
-                            onChange={(e) => setDateStart(e.target.value)}
-                        />
-                        <Calendar className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
-                    </div>
+              <div className="mb-6 bg-gray-50 dark:bg-gray-700/30 p-4 rounded-lg">
+                <div className="flex flex-wrap gap-4 items-end mb-3">
+                  <div>
+                      <label htmlFor="date-start" className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        Desde
+                      </label>
+                      <div className="relative">
+                          <input
+                              id="date-start"
+                              type="date"
+                              className={`pl-9 pr-3 py-2 rounded-lg border ${dateError ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'} bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500`}
+                              value={dateStart}
+                              onChange={(e) => handleDateStartChange(e.target.value)}
+                              aria-describedby={dateError ? 'date-error' : undefined}
+                          />
+                          <Calendar className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+                      </div>
+                  </div>
+                  <div>
+                      <label htmlFor="date-end" className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        Hasta
+                      </label>
+                      <div className="relative">
+                          <input
+                              id="date-end"
+                              type="date"
+                              className={`pl-9 pr-3 py-2 rounded-lg border ${dateError ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'} bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500`}
+                              value={dateEnd}
+                              onChange={(e) => handleDateEndChange(e.target.value)}
+                              aria-describedby={dateError ? 'date-error' : undefined}
+                          />
+                          <Calendar className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+                      </div>
+                  </div>
+                  {(dateStart || dateEnd) && !dateError && (
+                      <button
+                          onClick={() => { setDateStart(''); setDateEnd(''); setDateError(''); }}
+                          className="text-sm text-red-500 hover:text-red-700 px-2 py-2"
+                          aria-label="Limpiar fechas"
+                      >
+                          Limpiar
+                      </button>
+                  )}
                 </div>
-                <div>
-                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Hasta</label>
-                    <div className="relative">
-                        <input
-                            type="date"
-                            className="pl-9 pr-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500"
-                            value={dateEnd}
-                            onChange={(e) => setDateEnd(e.target.value)}
-                        />
-                        <Calendar className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
-                    </div>
-                </div>
-                {(dateStart || dateEnd) && (
-                    <button
-                        onClick={() => { setDateStart(''); setDateEnd(''); }}
-                        className="text-sm text-red-500 hover:text-red-700 px-2 py-2"
-                    >
-                        Limpiar
-                    </button>
+
+                {dateError && (
+                  <p id="date-error" className="text-xs text-red-600 dark:text-red-400 mb-2">
+                    {dateError}
+                  </p>
                 )}
+
+                <div className="flex flex-wrap gap-2">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 self-center">Presets:</span>
+                  <button
+                    onClick={() => setDatePreset(6)}
+                    className="text-xs px-3 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                    aria-label="Últimos 6 meses"
+                  >
+                    6 meses
+                  </button>
+                  <button
+                    onClick={() => setDatePreset(12)}
+                    className="text-xs px-3 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                    aria-label="Último año"
+                  >
+                    1 año
+                  </button>
+                  <button
+                    onClick={() => setDatePreset(36)}
+                    className="text-xs px-3 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                    aria-label="Últimos 3 años"
+                  >
+                    3 años
+                  </button>
+                </div>
               </div>
 
               {loadingDatos ? (

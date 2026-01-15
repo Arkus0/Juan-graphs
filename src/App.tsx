@@ -1,11 +1,24 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
-import Home from './pages/Home'
-import InePage from './pages/InePage'
-import OperacionDetalle from './pages/OperacionDetalle'
-import Dashboard from './pages/Dashboard'
+import { lazy, Suspense } from 'react'
 import { useStore } from './store/useStore'
-import { Moon, Sun, WifiOff } from 'lucide-react'
+import { Moon, Sun, WifiOff, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import ErrorBoundary from './components/ErrorBoundary'
+
+// Lazy load pages for better performance
+const Home = lazy(() => import('./pages/Home'))
+const InePage = lazy(() => import('./pages/InePage'))
+const OperacionDetalle = lazy(() => import('./pages/OperacionDetalle'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+
+// Loading component for Suspense fallback
+function PageLoader() {
+  return (
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+    </div>
+  );
+}
 
 function OfflineBanner() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -75,12 +88,16 @@ function App() {
   return (
     <BrowserRouter>
       <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/ine" element={<InePage />} />
-          <Route path="/ine/operacion/:id" element={<OperacionDetalle />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
+        <ErrorBoundary>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/ine" element={<InePage />} />
+              <Route path="/ine/operacion/:id" element={<OperacionDetalle />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </Layout>
     </BrowserRouter>
   )

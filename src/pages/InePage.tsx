@@ -23,17 +23,24 @@ export default function InePage() {
 
   const categories: Category[] = ['Demografía', 'Economía', 'Mercado Laboral', 'Turismo', 'Industria y Servicios', 'Sociedad', 'Otros'];
 
+  // Memoize Fuse instance to avoid recreating it on every render
+  const fuse = useMemo(() => {
+    if (!operaciones) return null;
+    return new Fuse(operaciones, {
+      keys: ['Nombre', 'Codigo'],
+      threshold: 0.2, // More precise search (was 0.3)
+      ignoreLocation: true, // Better matching across the entire string
+      minMatchCharLength: 2, // At least 2 characters must match
+    });
+  }, [operaciones]);
+
   const filteredOperaciones = useMemo(() => {
     if (!operaciones) return [];
 
     let result = operaciones;
 
-    // Filter by search
-    if (search) {
-      const fuse = new Fuse(result, {
-        keys: ['Nombre', 'Codigo'],
-        threshold: 0.3,
-      });
+    // Filter by search - using memoized fuse instance
+    if (search && fuse) {
       result = fuse.search(search).map(r => r.item);
     }
 
@@ -43,7 +50,7 @@ export default function InePage() {
     }
 
     return result;
-  }, [operaciones, search, selectedCategories]);
+  }, [operaciones, search, selectedCategories, fuse]);
 
   const toggleCategory = (cat: Category) => {
     setSelectedCategories(prev =>
