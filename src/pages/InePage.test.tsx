@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import InePage from './InePage';
 import { useOperaciones } from '../hooks/useIne';
 import { MemoryRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Mock the hook
 vi.mock('../hooks/useIne');
@@ -18,9 +19,11 @@ describe('InePage', () => {
       error: null
     });
     render(
-      <MemoryRouter>
-        <InePage />
-      </MemoryRouter>
+      <HelmetProvider>
+        <MemoryRouter>
+            <InePage />
+        </MemoryRouter>
+      </HelmetProvider>
     );
     expect(screen.getByText('IPC')).toBeInTheDocument();
     expect(screen.getByText('EPA')).toBeInTheDocument();
@@ -36,9 +39,11 @@ describe('InePage', () => {
       error: null
     });
     render(
-      <MemoryRouter>
-        <InePage />
-      </MemoryRouter>
+      <HelmetProvider>
+        <MemoryRouter>
+            <InePage />
+        </MemoryRouter>
+      </HelmetProvider>
     );
     const input = screen.getByPlaceholderText('Buscar operación (ej. IPC, EPA...)');
     fireEvent.change(input, { target: { value: 'IPC' } });

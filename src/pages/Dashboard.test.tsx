@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import Dashboard from './Dashboard';
 import { useStore } from '../store/useStore';
 import { MemoryRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 vi.mock('../store/useStore');
 // Mock useQuery
@@ -23,9 +24,11 @@ describe('Dashboard', () => {
   it('renders empty state', () => {
     (useStore as any).mockReturnValue({ favorites: [] });
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
+      <HelmetProvider>
+        <MemoryRouter>
+            <Dashboard />
+        </MemoryRouter>
+      </HelmetProvider>
     );
     expect(screen.getByText('Aún no tienes favoritos')).toBeInTheDocument();
   });
@@ -37,9 +40,11 @@ describe('Dashboard', () => {
       ]
     });
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
+      <HelmetProvider>
+        <MemoryRouter>
+            <Dashboard />
+        </MemoryRouter>
+      </HelmetProvider>
     );
     expect(screen.getByText('Tabla Fav')).toBeInTheDocument();
   });

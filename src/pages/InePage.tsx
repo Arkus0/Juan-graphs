@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useOperaciones } from '../hooks/useIne';
 import { Search, Loader2, FileText } from 'lucide-react';
 import Fuse from 'fuse.js';
+import { Helmet } from 'react-helmet-async';
 
 export default function InePage() {
   const navigate = useNavigate();
@@ -47,6 +48,11 @@ export default function InePage() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
+      <Helmet>
+        <title>Operaciones INE - DatosEspaña</title>
+        <meta name="description" content="Busca y explora operaciones estadísticas del Instituto Nacional de Estadística." />
+      </Helmet>
+
       <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Operaciones Estadísticas</h1>
 
       <div className="relative mb-8">

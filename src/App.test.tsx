@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest'
 import App from './App'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useStore } from './store/useStore'
+import { HelmetProvider } from 'react-helmet-async'
 
 vi.mock('./store/useStore');
 
@@ -19,9 +20,11 @@ describe('App', () => {
     (useStore as any).mockReturnValue({ theme: 'light', toggleTheme: vi.fn() });
 
     render(
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
+      <HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </HelmetProvider>
     )
     expect(screen.getAllByText('DatosEspaña')[0]).toBeInTheDocument()
     expect(screen.getByPlaceholderText('Buscar datos...')).toBeInTheDocument()

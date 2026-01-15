@@ -25,8 +25,17 @@ export const getTablasOperacion = async (operacionId: number): Promise<ITabla[]>
   return response.data;
 };
 
-export const getDatosTabla = async (tablaId: number, nult: number = 24): Promise<ISerie[]> => {
-  // Fetch last 24 periods by default
-  const response = await ineApi.get<ISerie[]>(`/DATOS_TABLA/${tablaId}?nult=${nult}`);
+export const getDatosTabla = async (tablaId: number, nult: number = 24, dateStart?: string, dateEnd?: string): Promise<ISerie[]> => {
+  let url = `/DATOS_TABLA/${tablaId}?nult=${nult}`;
+  if (dateStart && dateEnd) {
+    // If date filter is present, use date instead of nult
+    // Format required by INE: date=YYYYMMDD:YYYYMMDD
+    // Assuming inputs are YYYY-MM-DD
+    const start = dateStart.replace(/-/g, '');
+    const end = dateEnd.replace(/-/g, '');
+    url = `/DATOS_TABLA/${tablaId}?date=${start}:${end}`;
+  }
+
+  const response = await ineApi.get<ISerie[]>(url);
   return response.data;
 };

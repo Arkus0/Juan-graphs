@@ -5,6 +5,7 @@ import type { ISerie } from '../types/ine';
 import { useQuery } from '@tanstack/react-query';
 import { getDatosTabla } from '../services/ineApi';
 import ChartViewer from '../components/ChartViewer';
+import { Helmet } from 'react-helmet-async';
 
 // Component to render a single favorite card with data
 const FavoriteCard = ({ item }: { item: any }) => {
@@ -40,6 +41,10 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
+      <Helmet>
+        <title>Mi Dashboard - DatosEspaña</title>
+      </Helmet>
+
       <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white flex items-center gap-3">
         <BarChart2 className="w-8 h-8 text-blue-600" />
         Dashboard Personal

@@ -17,10 +17,10 @@ export const useTablasOperacion = (operacionId: number | null) => {
   });
 };
 
-export const useDatosTabla = (tablaId: number | null, nult: number = 24) => {
+export const useDatosTabla = (tablaId: number | null, nult: number = 24, dateStart?: string, dateEnd?: string) => {
   return useQuery({
-    queryKey: ['datos', tablaId, nult],
-    queryFn: () => getDatosTabla(tablaId!, nult),
+    queryKey: ['datos', tablaId, nult, dateStart, dateEnd],
+    queryFn: () => getDatosTabla(tablaId!, nult, dateStart, dateEnd),
     enabled: !!tablaId,
   });
 };

@@ -1,6 +1,7 @@
 import { Search } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { Helmet } from 'react-helmet-async'
 
 export default function Home() {
   const [search, setSearch] = useState('')
@@ -15,6 +16,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors flex flex-col items-center justify-center p-4">
+      <Helmet>
+        <title>DatosEspaña - Estadísticas del INE y CIS</title>
+        <meta name="description" content="Visualiza datos del INE y CIS de forma sencilla. IPC, paro, encuestas y más en tu dispositivo." />
+      </Helmet>
+
       <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 text-center">DatosEspaña</h1>
       <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 text-center">Datos del INE y CIS simplificados</p>
 

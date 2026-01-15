@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import OperacionDetalle from './OperacionDetalle';
 import { useTablasOperacion, useDatosTabla } from '../hooks/useIne';
 import { useStore } from '../store/useStore';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Mock hooks
 vi.mock('../hooks/useIne');
@@ -35,7 +36,11 @@ describe('OperacionDetalle', () => {
       removeFavorite: vi.fn(),
     });
 
-    render(<OperacionDetalle />);
+    render(
+      <HelmetProvider>
+        <OperacionDetalle />
+      </HelmetProvider>
+    );
     expect(screen.getByText('Tabla 1')).toBeInTheDocument();
   });
 
@@ -56,7 +61,11 @@ describe('OperacionDetalle', () => {
       removeFavorite: vi.fn(),
     });
 
-    render(<OperacionDetalle />);
+    render(
+      <HelmetProvider>
+        <OperacionDetalle />
+      </HelmetProvider>
+    );
 
     const tableItem = screen.getByText('Tabla 1');
     fireEvent.click(tableItem);
