@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useStore, FavoriteItem } from './useStore';
+import { useStore, type FavoriteItem } from './useStore';
 
 describe('useStore', () => {
   beforeEach(() => {

@@ -1,7 +1,6 @@
 import { useStore } from '../store/useStore';
 import { Link } from 'react-router-dom';
 import { BarChart2, ArrowRight } from 'lucide-react';
-import type { ISerie } from '../types/ine';
 import { useQuery } from '@tanstack/react-query';
 import { getDatosTabla } from '../services/ineApi';
 import ChartViewer from '../components/ChartViewer';
