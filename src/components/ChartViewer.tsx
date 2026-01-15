@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import type { ISerie } from '../types/ine';
 import '../utils/chartSetup';
@@ -50,9 +50,9 @@ export default function ChartViewer({ series, title }: ChartViewerProps) {
   const labels = sortedBaseData.map(d => format(new Date(d.Fecha), 'MMM yy', { locale: es }));
 
   // Check scale differences
-  const maxVals = visibleSeries.map(s => Math.max(...s.Data.map(d => d.Valor)));
-  const overallMax = Math.max(...maxVals);
-  const overallMin = Math.min(...visibleSeries.map(s => Math.min(...s.Data.map(d => d.Valor))));
+  // const maxVals = visibleSeries.map(s => Math.max(...s.Data.map(d => d.Valor)));
+  // const overallMax = Math.max(...maxVals);
+  // const overallMin = Math.min(...visibleSeries.map(s => Math.min(...s.Data.map(d => d.Valor))));
 
   // Basic multi-axis logic: if any series has max value < 10% of overall max, give it a separate axis
   // For simplicity in this iteration, we will use normalized view or just notify user.

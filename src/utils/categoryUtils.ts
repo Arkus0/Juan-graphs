@@ -1,4 +1,4 @@
-import { IOperacion } from '../types/ine';
+import type { IOperacion } from '../types/ine';
 
 export type Category = 'Demografía' | 'Economía' | 'Sociedad' | 'Mercado Laboral' | 'Industria y Servicios' | 'Turismo' | 'Otros';
 
