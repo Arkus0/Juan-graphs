@@ -1,15 +1,18 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useOperaciones } from '../hooks/useIne';
-import { Search, Loader2, FileText } from 'lucide-react';
+import { Search, Loader2, FileText, Filter, X } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { Helmet } from 'react-helmet-async';
+import { categorizeOperation, Category } from '../utils/categoryUtils';
 
 export default function InePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: operaciones, isLoading, error } = useOperaciones();
   const [search, setSearch] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
     const query = searchParams.get('q');
@@ -18,17 +21,35 @@ export default function InePage() {
     }
   }, [searchParams]);
 
+  const categories: Category[] = ['Demografía', 'Economía', 'Mercado Laboral', 'Turismo', 'Industria y Servicios', 'Sociedad', 'Otros'];
+
   const filteredOperaciones = useMemo(() => {
     if (!operaciones) return [];
-    if (!search) return operaciones;
 
-    const fuse = new Fuse(operaciones, {
-      keys: ['Nombre', 'Codigo'],
-      threshold: 0.3,
-    });
+    let result = operaciones;
 
-    return fuse.search(search).map(result => result.item);
-  }, [operaciones, search]);
+    // Filter by search
+    if (search) {
+      const fuse = new Fuse(result, {
+        keys: ['Nombre', 'Codigo'],
+        threshold: 0.3,
+      });
+      result = fuse.search(search).map(r => r.item);
+    }
+
+    // Filter by category
+    if (selectedCategories.length > 0) {
+      result = result.filter(op => selectedCategories.includes(categorizeOperation(op)));
+    }
+
+    return result;
+  }, [operaciones, search, selectedCategories]);
+
+  const toggleCategory = (cat: Category) => {
+    setSelectedCategories(prev =>
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    );
+  };
 
   if (isLoading) {
     return (
